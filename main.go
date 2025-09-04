@@ -9,6 +9,8 @@ import (
 
 const userName = "Marcel"
 
+//continue at step 6
+
 func main() {
 	configFile, err := config.Read()
 	if err != nil {
