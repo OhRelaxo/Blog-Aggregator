@@ -33,6 +33,8 @@ func main() {
 	coms := commands{regComs: make(map[string]func(*state, command) error)}
 	coms.register("login", handlerLogin)
 	coms.register("register", handlerRegister)
+	coms.register("reset", handlerReset)
+	coms.register("users", handlerUsers)
 
 	input := os.Args
 	if len(input) < 2 {

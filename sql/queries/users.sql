@@ -7,3 +7,9 @@ returning *;
 select *
 from users
 where name = $1;
+
+-- name: ResetUsers :exec
+DELETE FROM users;
+
+-- name: GetUsers :many
+select users.name from users;
