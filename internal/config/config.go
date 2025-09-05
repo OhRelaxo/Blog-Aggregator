@@ -6,8 +6,8 @@ import (
 )
 
 type Config struct {
-	Db_url            *string `json:"db_url"`
-	Current_user_name *string `json:"current_user_name"`
+	DbUrl           *string `json:"db_url"`
+	CurrentUserName *string `json:"current_user_name"`
 }
 
 const configFileName = "/.gatorconfig.json"
@@ -33,12 +33,15 @@ func Read() (*Config, error) {
 		return result, err
 	}
 
-	json.Unmarshal(rawFile, &result)
+	err = json.Unmarshal(rawFile, &result)
+	if err != nil {
+		return nil, err
+	}
 	return result, nil
 }
 
 func (c Config) SetUser(userName string) error {
-	c.Current_user_name = &userName
+	c.CurrentUserName = &userName
 	rawJson, err := json.Marshal(c)
 	if err != nil {
 		return err
