@@ -5,22 +5,21 @@ import (
 	"os"
 
 	"github.com/OhRelaxo/Blog-Aggregator/internal/config"
-	"github.com/OhRelaxo/Blog-Aggregator/internal/handler"
 )
 
-//const userName = "Marcel"
-
-//continue at step 6
+type state struct {
+	config *config.Config
+}
 
 func main() {
 	configFile, err := config.Read()
 	if err != nil {
 		log.Fatal(err)
 	}
-	state := commandHandler.State{Config: configFile}
+	programState := &state{config: configFile}
 
-	commands := commandHandler.Commands{Coms: make(map[string]func(*commandHandler.State, commandHandler.Command) error)}
-	commands.Register("login", commandHandler.HandlerLogin)
+	coms := commands{regComs: make(map[string]func(*state, command) error)}
+	coms.register("login", handlerLogin)
 
 	input := os.Args
 	if len(input) < 2 {
@@ -29,8 +28,8 @@ func main() {
 
 	name := input[1]
 	args := input[2:]
-	cmd := commandHandler.Command{Name: name, Arguments: args}
-	err = commands.Run(&state, cmd)
+	cmd := command{name: name, arguments: args}
+	err = coms.run(programState, cmd)
 	if err != nil {
 		log.Fatal(err)
 	}
