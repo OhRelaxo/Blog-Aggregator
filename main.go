@@ -1,14 +1,19 @@
 package main
 
 import (
+	"database/sql"
+	"fmt"
 	"log"
 	"os"
 
 	"github.com/OhRelaxo/Blog-Aggregator/internal/config"
+	"github.com/OhRelaxo/Blog-Aggregator/internal/database"
+	_ "github.com/lib/pq"
 )
 
 type state struct {
 	config *config.Config
+	db     *database.Queries
 }
 
 func main() {
@@ -16,10 +21,18 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	programState := &state{config: configFile}
+
+	db, err := sql.Open("postgres", *configFile.DbUrl)
+	if err != nil {
+		log.Fatal(fmt.Sprintf("error while establishing a databse connection: %v", err))
+	}
+	dbQueries := database.New(db)
+
+	programState := &state{config: configFile, db: dbQueries}
 
 	coms := commands{regComs: make(map[string]func(*state, command) error)}
 	coms.register("login", handlerLogin)
+	coms.register("register", handlerRegister)
 
 	input := os.Args
 	if len(input) < 2 {
