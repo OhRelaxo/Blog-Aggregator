@@ -21,7 +21,7 @@ func handlerLogin(s *state, cmd command) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("The User: %v has been logedin", user.Name)
+	fmt.Printf("The User: %v has been logedin\n", user.Name)
 	return nil
 }
 
