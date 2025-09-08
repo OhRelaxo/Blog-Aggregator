@@ -4,7 +4,7 @@ values ($1, $2, $3, $4, $5, $6)
 returning *;
 
 -- name: GetFeeds :many
-select feeds.name, feeds.url, users.name 
+select feeds.name, feeds.url, users.name as user_name
 from feeds
 left join users
 on feeds.user_id = users.id;

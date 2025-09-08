@@ -50,16 +50,16 @@ func (q *Queries) CreateFeed(ctx context.Context, arg CreateFeedParams) (Feed, e
 }
 
 const getFeeds = `-- name: GetFeeds :many
-select feeds.name, feeds.url, users.name 
+select feeds.name, feeds.url, users.name as user_name
 from feeds
 left join users
 on feeds.user_id = users.id
 `
 
 type GetFeedsRow struct {
-	Name   string
-	Url    string
-	Name_2 sql.NullString
+	Name     string
+	Url      string
+	UserName sql.NullString
 }
 
 func (q *Queries) GetFeeds(ctx context.Context) ([]GetFeedsRow, error) {
@@ -71,7 +71,7 @@ func (q *Queries) GetFeeds(ctx context.Context) ([]GetFeedsRow, error) {
 	var items []GetFeedsRow
 	for rows.Next() {
 		var i GetFeedsRow
-		if err := rows.Scan(&i.Name, &i.Url, &i.Name_2); err != nil {
+		if err := rows.Scan(&i.Name, &i.Url, &i.UserName); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
