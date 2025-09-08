@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"os"
 
@@ -24,7 +23,7 @@ func main() {
 
 	db, err := sql.Open("postgres", *configFile.DbUrl)
 	if err != nil {
-		log.Fatal(fmt.Sprintf("error while establishing a databse connection: %v", err))
+		log.Fatalf("error while establishing a databse connection: %v", err)
 	}
 	dbQueries := database.New(db)
 

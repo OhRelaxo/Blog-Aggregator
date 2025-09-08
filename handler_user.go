@@ -10,7 +10,7 @@ import (
 )
 
 func handlerLogin(s *state, cmd command) error {
-	if len(cmd.arguments) < 0 {
+	if len(cmd.arguments) <= 0 {
 		return fmt.Errorf("the login command expects at least one argument")
 	}
 	user, err := s.db.GetUser(context.Background(), cmd.arguments[0])
