@@ -39,7 +39,8 @@ func main() {
 	coms.register("feeds", handlerFeeds)
 	coms.register("follow", middlewareLoggedIn(handlerFollow))
 	coms.register("following", middlewareLoggedIn(handlerFollowing))
-	coms.register("agg", handlerAgg)
+	coms.register("agg", middlewareAgg(handlerAgg))
+	coms.register("unfollow", middlewareLoggedIn(handlerUnfollow))
 
 	input := os.Args
 	if len(input) < 2 {

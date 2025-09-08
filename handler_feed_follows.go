@@ -38,3 +38,18 @@ func handlerFollowing(s *state, _ command, _ database.User) error {
 	}
 	return nil
 }
+
+func handlerUnfollow(s *state, cmd command, user database.User) error {
+	if len(cmd.arguments) < 1 {
+		return fmt.Errorf("you need a url to unfollow")
+	}
+	feed, err := s.db.GetFeedByURL(context.Background(), cmd.arguments[0])
+	if err != nil {
+		return fmt.Errorf("error while executing GetFeedByURL: %v", err)
+	}
+	err = s.db.DeleteFollow(context.Background(), database.DeleteFollowParams{UserID: user.ID, FeedID: feed.ID})
+	if err != nil {
+		return fmt.Errorf("error while executing the DelteFollow command: %v", err)
+	}
+	return nil
+}

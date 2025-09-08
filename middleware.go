@@ -27,3 +27,13 @@ func middlewareLoggedIn(handler func(s *state, cmd command, user database.User) 
 		return nil
 	}
 }
+
+func middlewareAgg(handler func(s *state, cmd command, timeBetweenReqs string) error) func(*state, command) error {
+	return func(s *state, c command) error {
+		err := handler(s, c, "10s")
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+}

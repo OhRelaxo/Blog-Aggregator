@@ -67,31 +67,48 @@ func (q *Queries) CreateFeedFollow(ctx context.Context, arg CreateFeedFollowPara
 	return i, err
 }
 
+const deleteFollow = `-- name: DeleteFollow :exec
+DELETE FROM feed_follows
+where user_id = $1
+and feed_id = $2
+`
+
+type DeleteFollowParams struct {
+	UserID uuid.UUID
+	FeedID uuid.UUID
+}
+
+func (q *Queries) DeleteFollow(ctx context.Context, arg DeleteFollowParams) error {
+	_, err := q.db.ExecContext(ctx, deleteFollow, arg.UserID, arg.FeedID)
+	return err
+}
+
 const getFeedFollowsForUser = `-- name: GetFeedFollowsForUser :many
-SELECT feed_follows.id, feed_follows.created_at, feed_follows.updated_at, feed_follows.user_id, feed_id, feeds.id, feeds.created_at, feeds.updated_at, feeds.name, url, feeds.user_id, users.id, users.created_at, users.updated_at, users.name, users.name as user_name, feeds.name as feed_name FROM feed_follows
+SELECT feed_follows.id, feed_follows.created_at, feed_follows.updated_at, feed_follows.user_id, feed_id, feeds.id, feeds.created_at, feeds.updated_at, feeds.name, url, feeds.user_id, last_fetched_at, users.id, users.created_at, users.updated_at, users.name, users.name as user_name, feeds.name as feed_name FROM feed_follows
 LEFT JOIN feeds on feed_follows.feed_id = feeds.id
 LEFT JOIN users on feed_follows.user_id = users.id
 where users.name = $1
 `
 
 type GetFeedFollowsForUserRow struct {
-	ID          uuid.UUID
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	UserID      uuid.UUID
-	FeedID      uuid.UUID
-	ID_2        uuid.NullUUID
-	CreatedAt_2 sql.NullTime
-	UpdatedAt_2 sql.NullTime
-	Name        sql.NullString
-	Url         sql.NullString
-	UserID_2    uuid.NullUUID
-	ID_3        uuid.NullUUID
-	CreatedAt_3 sql.NullTime
-	UpdatedAt_3 sql.NullTime
-	Name_2      sql.NullString
-	UserName    sql.NullString
-	FeedName    sql.NullString
+	ID            uuid.UUID
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
+	UserID        uuid.UUID
+	FeedID        uuid.UUID
+	ID_2          uuid.NullUUID
+	CreatedAt_2   sql.NullTime
+	UpdatedAt_2   sql.NullTime
+	Name          sql.NullString
+	Url           sql.NullString
+	UserID_2      uuid.NullUUID
+	LastFetchedAt sql.NullTime
+	ID_3          uuid.NullUUID
+	CreatedAt_3   sql.NullTime
+	UpdatedAt_3   sql.NullTime
+	Name_2        sql.NullString
+	UserName      sql.NullString
+	FeedName      sql.NullString
 }
 
 func (q *Queries) GetFeedFollowsForUser(ctx context.Context, name string) ([]GetFeedFollowsForUserRow, error) {
@@ -115,6 +132,7 @@ func (q *Queries) GetFeedFollowsForUser(ctx context.Context, name string) ([]Get
 			&i.Name,
 			&i.Url,
 			&i.UserID_2,
+			&i.LastFetchedAt,
 			&i.ID_3,
 			&i.CreatedAt_3,
 			&i.UpdatedAt_3,

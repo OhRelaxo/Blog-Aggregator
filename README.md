@@ -88,3 +88,7 @@ if you have a custom setup (the protocol has to be postgres!):
   "db_url": "protocol://username:password@host:port/database?sslmode=disable"
 }
 ```
+to remove the service:
+```
+sudo systemctl disable <service-name>
+```
