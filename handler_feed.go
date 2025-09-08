@@ -13,6 +13,9 @@ func handlerAddFeed(s *state, cmd command) error {
 	if len(cmd.arguments) < 2 {
 		return fmt.Errorf("you need at two arguments to add a feed")
 	}
+	if s.config.CurrentUserName == nil {
+		return fmt.Errorf("you need to be loged in to use addfeed")
+	}
 	user, err := s.db.GetUser(context.Background(), *s.config.CurrentUserName)
 	if err != nil {
 		return err
@@ -24,7 +27,17 @@ func handlerAddFeed(s *state, cmd command) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Feed: %v\n", feed)
+
+	feedFollow, err := s.db.CreateFeedFollow(context.Background(), database.CreateFeedFollowParams{
+		ID: uuid.New(), CreatedAt: time.Now(), UpdatedAt: time.Now(), UserID: user.ID, FeedID: feed.ID,
+	})
+	if err != nil {
+		return fmt.Errorf("could not create feed follow: %v", err)
+	}
+	fmt.Println("created feed successfully")
+	fmt.Printf("- Feed: %v\n", feed)
+	fmt.Println("created feed follow successfully")
+	fmt.Printf("- Feed Follow: %v\n", feedFollow)
 	return nil
 }
 
