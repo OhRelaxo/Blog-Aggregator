@@ -9,14 +9,11 @@ import (
 	"github.com/google/uuid"
 )
 
-func handlerFollow(s *state, cmd command) error {
+func handlerFollow(s *state, cmd command, user database.User) error {
 	if len(cmd.arguments) < 1 {
 		return fmt.Errorf("you need a url that you want to follow")
 	}
-	user, err := s.db.GetUser(context.Background(), *s.config.CurrentUserName)
-	if err != nil {
-		return err
-	}
+
 	feed, err := s.db.GetFeedByURL(context.Background(), cmd.arguments[0])
 	if err != nil {
 		return fmt.Errorf("error while geting feed: %v", err)
@@ -31,10 +28,7 @@ func handlerFollow(s *state, cmd command) error {
 	return nil
 }
 
-func handlerFollowing(s *state, _ command) error {
-	if s.config.CurrentUserName == nil {
-		return fmt.Errorf("no user loged in")
-	}
+func handlerFollowing(s *state, _ command, _ database.User) error {
 	feedFollows, err := s.db.GetFeedFollowsForUser(context.Background(), *s.config.CurrentUserName)
 	if err != nil {
 		return fmt.Errorf("error while executing the GetFeedFollowsForUser command: %v", err)

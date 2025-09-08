@@ -30,14 +30,14 @@ func main() {
 	programState := &state{config: configFile, db: dbQueries}
 
 	coms := commands{regComs: make(map[string]func(*state, command) error)}
-	coms.register("login", handlerLogin)
 	coms.register("register", handlerRegister)
+	coms.register("login", handlerLogin)
 	coms.register("reset", handlerReset)
 	coms.register("users", handlerUsers)
-	coms.register("addfeed", handlerAddFeed)
+	coms.register("addfeed", middlewareLoggedIn(handlerAddFeed))
 	coms.register("feeds", handlerFeeds)
-	coms.register("follow", handlerFollow)
-	coms.register("following", handlerFollowing)
+	coms.register("follow", middlewareLoggedIn(handlerFollow))
+	coms.register("following", middlewareLoggedIn(handlerFollowing))
 
 	input := os.Args
 	if len(input) < 2 {

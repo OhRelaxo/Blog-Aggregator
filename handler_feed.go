@@ -9,16 +9,9 @@ import (
 	"github.com/google/uuid"
 )
 
-func handlerAddFeed(s *state, cmd command) error {
+func handlerAddFeed(s *state, cmd command, user database.User) error {
 	if len(cmd.arguments) < 2 {
 		return fmt.Errorf("you need at two arguments to add a feed")
-	}
-	if s.config.CurrentUserName == nil {
-		return fmt.Errorf("you need to be loged in to use addfeed")
-	}
-	user, err := s.db.GetUser(context.Background(), *s.config.CurrentUserName)
-	if err != nil {
-		return err
 	}
 
 	feed, err := s.db.CreateFeed(context.Background(), database.CreateFeedParams{
