@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"os"
 
@@ -23,7 +24,7 @@ func main() {
 
 	db, err := sql.Open("postgres", *configFile.DbUrl)
 	if err != nil {
-		log.Fatalf("error while establishing a databse connection: %v", err)
+		log.Fatal(fmt.Sprintf("error while establishing a databse connection: %v", err))
 	}
 	dbQueries := database.New(db)
 
@@ -38,6 +39,7 @@ func main() {
 	coms.register("feeds", handlerFeeds)
 	coms.register("follow", middlewareLoggedIn(handlerFollow))
 	coms.register("following", middlewareLoggedIn(handlerFollowing))
+	coms.register("agg", handlerAgg)
 
 	input := os.Args
 	if len(input) < 2 {
