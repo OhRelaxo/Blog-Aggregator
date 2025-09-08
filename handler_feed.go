@@ -27,3 +27,14 @@ func handlerAddFeed(s *state, cmd command) error {
 	fmt.Printf("Feed: %v\n", feed)
 	return nil
 }
+
+func handlerFeeds(s *state, _ command) error {
+	feeds, err := s.db.GetFeeds(context.Background())
+	if err != nil {
+		return err
+	}
+	for _, feed := range feeds {
+		fmt.Printf("- feed name: %v\n- feed url: %v\n- user name: %v\n", feed.Name, feed.Url, feed.Name_2.String)
+	}
+	return nil
+}
